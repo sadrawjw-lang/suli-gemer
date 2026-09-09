@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+<meta charset="utf-8">
+<title>Gaming V2Ray Config Builder</title>
+<style>
+body {
+  background: radial-gradient(circle at top, #111 0, #000 40%, #050816 100%);
+  font-family: sans-serif;
+  color: #fff;
+  text-align: center;
+  padding: 40px 10px;
+}
+.box {
+  background: rgba(0,0,0,0.75);
+  padding: 25px;
+  width: 95%;
+  max-width: 700px;
+  margin: auto;
+  border-radius: 18px;
+  box-shadow: 0 0 25px rgba(0,255,255,0.25);
+}
+h1 {
+  font-size: 26px;
+  margin-bottom: 10px;
+}
+h2 {
+  font-size: 20px;
+  margin-top: 25px;
+}
+label {
+  display: block;
+  text-align: right;
+  margin: 8px 0 3px;
+  font-size: 14px;
+}
+select, input {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: none;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+select:focus, input:focus {
+  outline: 2px solid #00c3ff;
+}
+.row {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+.row > div {
+  flex: 1;
+}
+.btn {
+  display: inline-block;
+  background: #00c3ff;
+  color: #000;
+  padding: 10px 20px;
+  border-radius: 12px;
+  text-decoration: none;
+  font-size: 15px;
+  margin: 10px 5px 0;
+  cursor: pointer;
+  border: none;
+  transition: 0.2s;
+}
+.btn:hover {
+  background: #0099cc;
+}
+.output {
+  margin-top: 20px;
+  text-align: left;
+  direction: ltr;
+  font-size: 13px;
+  background: rgba(0,0,0,0.8);
+  padding: 12px;
+  border-radius: 10px;
+  word-wrap: break-word;
+}
+#qr {
+  margin-top: 10px;
+}
+.progress {
+  margin-top: 10px;
+  font-size: 13px;
+  text-align: right;
+}
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: #222;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.progress-inner {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg,#00ff9d,#00c3ff,#ff4f4f);
+  transition: width 0.5s;
+}
+</style>
+</head>
+<body>
+<div class="box">
+  <h1>سولی گمر – سازنده کانفیگ گیمینگ V2Ray</h1>
+  <p style="font-size:13px;">نوع کانفیگ، حجم، مدت و کشور رو انتخاب کن، بعد کانفیگ رو به صورت متن، QR و لینک ساب بگیر.</p>
+
+  <h2>اطلاعات کانفیگ</h2>
+
+  <div class="row">
+    <div>
+      <label>نوع کانفیگ V2Ray</label>
+      <select id="type">
+        <option value="vless">VLESS</option>
+        <option value="vmess">VMESS</option>
+        <option value="trojan">TROJAN</option>
+      </select>
+    </div>
+    <div>
+      <label>کشور</label>
+      <select id="country">
+        <option value="Germany">آلمان</option>
+        <option value="Finland">فنلاند</option>
+        <option value="Netherlands">هلند</option>
+        <option value="France">فرانسه</option>
+        <option value="USA">آمریکا</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="row">
+    <div>
+      <label>حجم (گیگ)</label>
+      <select id="size">
+        <option value="10">10 GB</option>
+        <option value="50">50 GB</option>
+        <option value="100">100 GB</option>
+        <option value="250">250 GB</option>
+      </select>
+    </div>
+    <div>
+      <label>مدت اعتبار</label>
+      <select id="days">
+        <option value="7">7 روز</option>
+        <option value="30">30 روز</option>
+        <option value="90">90 روز</option>
+      </select>
+    </div>
+  </div>
+
+  <label>اسم کانفیگ</label>
+  <input id="name" placeholder="مثلاً: PUBG-Pro-01">
+
+  <div class="progress">
+    <span id="progressText">در انتظار ساخت کانفیگ…</span>
+    <div class="progress-bar">
+      <div class="progress-inner" id="progressInner"></div>
+    </div>
+  </div>
+
+  <button class="btn" onclick="buildConfig()">ساخت کانفیگ</button>
+  <button class="btn" onclick="copyText()">کپی متن کانفیگ</button>
+
+  <h2>خروجی کانفیگ</h2>
+
+  <div class="output" id="configText">
+    هنوز کانفیگی ساخته نشده.
+  </div>
+
+  <div id="qr"></div>
+
+  <div class="output" id="subLink">
+    لینک ساب هنوز ساخته نشده.
+  </div>
+</div>
+
+<script>
+function buildConfig() {
+  const type = document.getElementById('type').value;
+  const country = document.getElementById('country').value;
+  const size = document.getElementById('size').value;
+  const days = document.getElementById('days').value;
+  const name = document.getElementById('name').value || 'Gaming-Config';
+
+  // متن کانفیگ (نمونه‌ی نمایشی – جایگزین واقعی بعداً)
+  const config = 
+    'TYPE: ' + type.toUpperCase() + '\\n' +
+    'NAME: ' + name + '\\n' +
+    'COUNTRY: ' + country + '\\n' +
+    'SIZE: ' + size + ' GB\\n' +
+    'DAYS: ' + days + '\\n' +
+    'SERVER: gaming.example.com\\n' +
+    'PORT: 443\\n' +
+    'TLS: enabled\\n' +
+    'NOTE: این فقط قالب نمایشی است.';
+
+  document.getElementById('configText').textContent = config;
+
+  // لینک ساب نمایشی
+  const sub = 'https://sub.example.com/v2ray?name=' 
+              + encodeURIComponent(name) +
+              '&type=' + encodeURIComponent(type) +
+              '&country=' + encodeURIComponent(country) +
+              '&size=' + encodeURIComponent(size) +
+              '&days=' + encodeURIComponent(days);
+
+  document.getElementById('subLink').textContent = 'لینک ساب: ' + sub;
+
+  // QR از متن کانفیگ (استفاده از Google Chart API)
+  const qrUrl = 'https://chart.googleapis.com/chart?cht=qr&chs=250x250&chl=' 
+                + encodeURIComponent(config);
+  document.getElementById('qr').innerHTML = '<img src="' + qrUrl + '" alt="QR Config" style="margin-top:10px;border-radius:12px;">';
+
+  // نوار پیشرفت
+  document.getElementById('progressInner').style.width = '100%';
+  document.getElementById('progressText').textContent = 'کانفیگ ساخته شد – آماده دریافت.';
+}
+
+function copyText() {
+  const text = document.getElementById('configText').textContent;
+  if (!text || text.indexOf('هنوز کانفیگی ساخته نشده') !== -1) {
+    alert('اول کانفیگ رو بساز، بعد کپی کن.');
+    return;
+  }
+  navigator.clipboard.writeText(text).then(function() {
+    alert('متن کانفیگ کپی شد.');
+  }, function() {
+    alert('مرورگر اجازه کپی مستقیم نداد، دستی کپی کن.');
+  });
+}
+</script>
+</body>
+</html>
