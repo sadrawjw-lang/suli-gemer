@@ -1,2 +1,2 @@
-# suli-gemer
-Suli Gemer – Gaming Launcher
+# suli-Baloch
+Suli Baloch – Gaming Launcher
